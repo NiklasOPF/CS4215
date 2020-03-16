@@ -27,4 +27,3 @@ def partial_evaluate(s):
 
 
 
-partial_evaluate("1+   2 ;   \n (x**3 + x**2 - x - 1)/(x**2 + 2 * x + 1) ;")
