@@ -1,4 +1,6 @@
 import PartialEvaluator as pe
 
-program = "hello; my name is Peter; I am 26 years old"
+program = "function times_two(x) { \
+    return x + x;                  \
+    }"
 pe.partially_evaluate(program);
