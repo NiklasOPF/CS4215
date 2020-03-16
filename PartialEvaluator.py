@@ -1,17 +1,30 @@
-#use semicolons to differnetiate "lines"
+from sympy import * 
 
-#def partially_evaluate(program):
-#    my_list = []
-#    i = 0;
-#    while (i<program)
-#   return 2
+def evaluate(l):
+	ss=simplify(l)
+	return ss 
+
+def partial_evaluate(s):
+	final=""
+	x=""
+	for el in s:
+		if(el!=';'):
+			if(el=='\n' or el==' '):
+				if(x[-1]!='\n' and x[-1]!=' '):
+					x+=' '
+			
 
 
-def partially_evaluate (program):
-    modified = False  #flag that cehecks if we have been able ot improve the program.
-    lines = program.split(";");
-    for line in lines:
-        print(line)
+			else:
+				x+=el
+		else:
+			x+=";\n"
+	for line in x.splitlines():
 
-program = "hello; my name is Peter; I am 26 years old"
-partially_evaluate(program);
+		final+=str(evaluate(line[:-1]))
+		final+=';\n'
+	print(final)
+
+
+
+partial_evaluate("1+   2 ;   \n (x**3 + x**2 - x - 1)/(x**2 + 2 * x + 1) ;")
