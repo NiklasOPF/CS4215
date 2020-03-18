@@ -1,5 +1,5 @@
 /*
-Evaluator for language with booleans, conditionals,
+Partial Evaluator for Source §1 sublanguage with booleans, conditionals,
 sequences, functions, constants, variables and blocks
 
 This is an evaluator for a language that lets you declare
