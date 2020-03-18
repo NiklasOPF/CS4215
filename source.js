@@ -440,7 +440,7 @@ function assignment_value(stmt) {
 function eval_assignment(stmt, env) {
     const value = evaluate(assignment_value(stmt), env);
     assign_name_value(assignment_name(stmt), value, env);
-    return value;
+    return assignment_name(stmt)+" = "+stringify(value);
 }
 
 /* BLOCKS */
