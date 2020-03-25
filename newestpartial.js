@@ -770,11 +770,11 @@ const primitive_functions = list(
        list("%",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" % "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" % "+y+")":(is_string(x) && is_string(y))?"("+x+" % "+y+")": x % y  ),
        list("===",           (x,y) => (is_string(x) && !is_string(y))?"("+x+" === "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" === "+y+")":(is_string(x) && is_string(y))?"("+x+" === "+y+")": x === y  ),
        list("!==",           (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
-       list("<",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
-       list("<=",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
-       list(">",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
-       list(">=",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
-       list("!",              x    =>   !   x)
+       list("<",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" < "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" < "+y+")":(is_string(x) && is_string(y))?"("+x+" <"+y+")": x < y  ),
+       list("<=",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" <= "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" <= "+y+")":(is_string(x) && is_string(y))?"("+x+" <= "+y+")": x <= y  ),
+       list(">",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" > "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" > "+y+")":(is_string(x) && is_string(y))?"("+x+" > "+y+")": x > y  ),
+       list(">=",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" >= "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" >= "+y+")":(is_string(x) && is_string(y))?"("+x+" >= "+y+")": x >= y  ),
+       list("!",              x    => (is_string(x)?"("+"!"+x+")":!x))
        );
 
 // the global environment also has bindings for all
