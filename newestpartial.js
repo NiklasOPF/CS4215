@@ -30,7 +30,7 @@ unop    ::= !
 // are considered "self_evaluating". This means, they
 // represent themselves in the syntax tree
 let final_pro="";
-let constevaluation=0;
+let constevaluation=1;
 function func_eval_constant_declaration(stmt, env) {
     set_name_value(constant_declaration_name(stmt),
         evaluate(constant_declaration_value(stmt), env),
@@ -370,12 +370,14 @@ function apply_primitive_function(fun, argument_list) {
 function apply(fun, args) {
     // display(fun);
     // display(args);
-    constevaluation=0;
+    // constevaluation=0;
    if (is_primitive_function(fun)) {
+    //   constevaluation=0;
       let e= apply_primitive_function(fun, args);
-      constevaluation=1;
+    //   constevaluation=1;
       return e;
    } else if (is_compound_function(fun)) {
+    //   constevaluation=0;
       const body = function_body(fun);
       const locals = local_names(body);
       const names = insert_all(function_parameters(fun),
@@ -392,15 +394,15 @@ function apply(fun, args) {
       if (is_return_value(result)) {
         //   constevaluation=1;
          let e= return_value_content(result);
-         constevaluation=1;
+        //  constevaluation=1;
          return e;
          
       } else {
-          constevaluation=1;
+        //   constevaluation=1;
           return undefined;
       }
    } else {
-       constevaluation=1;
+    //   constevaluation=1;
       error(fun, "Unknown function type in apply");
    }
 }
@@ -683,8 +685,12 @@ function list_of_values(exps, env) {
     if (no_operands(exps)) {
         return null;
     } else {
-        return pair(evaluate(first_operand(exps), env),
+        // constevaluation=0;
+        let e= pair(evaluate(first_operand(exps), env),
                     list_of_values(rest_operands(exps), env));
+        
+        // constevaluation=1;
+        return e;
    }
 }
 
@@ -693,8 +699,16 @@ function list_of_values(exps, env) {
 // invokes the appropriate implementations of their
 // evaluation process, as described above, always using
 // a current environment
-
+function fapply(stmt,env){
+    constevaluation=0;
+    let e=apply(evaluate(operator(stmt), env),
+                  list_of_values(operands(stmt), env));
+    // return e;
+    constevaluation=1;
+    return e;
+}
 function evaluate(stmt, env) {
+    
    return is_self_evaluating(stmt)
           ?  stmt
         : is_name(stmt)
@@ -716,8 +730,7 @@ function evaluate(stmt, env) {
         : is_return_statement(stmt)
           ? eval_return_statement(stmt, env)
         : is_application(stmt)
-          ? apply(evaluate(operator(stmt), env),
-                  list_of_values(operands(stmt), env))
+          ? fapply(stmt,env)
         : error(stmt, "Unknown statement type in evaluate: ");
 }
 function func_eval_sequence(stmts, env) {
