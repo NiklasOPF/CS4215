@@ -30,6 +30,7 @@ unop    ::= !
 // are considered "self_evaluating". This means, they
 // represent themselves in the syntax tree
 let final_pro="";
+let constevaluation=0;
 function func_eval_constant_declaration(stmt, env) {
     set_name_value(constant_declaration_name(stmt),
         evaluate(constant_declaration_value(stmt), env),
@@ -92,12 +93,15 @@ function constant_declaration_value(stmt) {
 
 function eval_constant_declaration(stmt, env) {
     // display(constant_declaration_value(stmt));
+    
     const e=evaluate(constant_declaration_value(stmt), env);
     // display(constant_declaration_name(stmt));
     // display(e);
+    
     set_name_value(constant_declaration_name(stmt),
         e,
         env);
+    
     return "const "+constant_declaration_name(stmt)+" = "+(is_string(e)?e:stringify(e));
 }
 
@@ -215,12 +219,19 @@ function partial_eval(stmt,env){
 
 function eval_function_definition(stmt, env) {
     // display("goneeeee");
-    return partial_eval(stmt,env);
-    // return make_compound_function(
-    //           map(name_of_name,
-    //               function_definition_parameters(stmt)),
-    //           function_definition_body(stmt),
-    //           env);
+    if(constevaluation===0){
+        return make_compound_function(
+              map(name_of_name,
+                  function_definition_parameters(stmt)),
+              function_definition_body(stmt),
+              env);
+        
+        
+    }
+    else{
+        return partial_eval(stmt,env);
+    }
+    
 }
 
 /* SEQUENCES */
@@ -357,8 +368,13 @@ function apply_primitive_function(fun, argument_list) {
 // the special value no_value_yet
 
 function apply(fun, args) {
+    // display(fun);
+    // display(args);
+    constevaluation=0;
    if (is_primitive_function(fun)) {
-      return apply_primitive_function(fun, args);
+      let e= apply_primitive_function(fun, args);
+      constevaluation=1;
+      return e;
    } else if (is_compound_function(fun)) {
       const body = function_body(fun);
       const locals = local_names(body);
@@ -374,11 +390,17 @@ function apply(fun, args) {
                       values,
                       function_environment(fun)));
       if (is_return_value(result)) {
-         return return_value_content(result);
+        //   constevaluation=1;
+         let e= return_value_content(result);
+         constevaluation=1;
+         return e;
+         
       } else {
+          constevaluation=1;
           return undefined;
       }
    } else {
+       constevaluation=1;
       error(fun, "Unknown function type in apply");
    }
 }
@@ -448,8 +470,17 @@ function return_value_content(value) {
 }
 function eval_return_statement(stmt, env) {
     // display("goneeeeeeeeee");
+    if(constevaluation===0){
+        return make_return_value(
+               evaluate(return_statement_expression(stmt),
+                        env));
+        
+        
+    }
+    else{
+        return evaluatefunc(return_statement_expression(stmt),env);
+    }
     
-    return evaluatefunc(return_statement_expression(stmt),env);
     // return undefined;
     // return "return" + stringify(make_return_value(
     //           evaluate(return_statement_expression(stmt),
