@@ -97,7 +97,7 @@ function eval_constant_declaration(stmt, env) {
     set_name_value(constant_declaration_name(stmt),
         e,
         env);
-    return "const "+constant_declaration_name(stmt)+" = "+stringify(e);
+    return "const "+constant_declaration_name(stmt)+" = "+(is_string(e)?e:stringify(e));
 }
 
 /* VARIABLE DECLARATIONS */
@@ -197,8 +197,15 @@ function partial_eval(stmt,env){
     let exenv=extend_environment(l, l, env);
     // display(evaluate(["name", ["z", null]],exenv));
     // display(exenv);
+    let s="";
+    let x=0;
+    for(x=0;x<length(l);x=x+1){
+        s=s+l[x];
+        
+    }
+    let e=evaluatefunc(make_block(function_definition_body(stmt)),exenv);
     
-    evaluatefunc(make_block(function_definition_body(stmt)),exenv);
+    return "("+s+")"+" => "+(is_string(e)?e:stringify(e));
 }
 // evluating a function definition expression
 // results in a function value. Note that the
@@ -207,7 +214,7 @@ function partial_eval(stmt,env){
 
 function eval_function_definition(stmt, env) {
     // display("goneeeee");
-    partial_eval(stmt,env);
+    return partial_eval(stmt,env);
     // return make_compound_function(
     //           map(name_of_name,
     //               function_definition_parameters(stmt)),
@@ -441,7 +448,7 @@ function return_value_content(value) {
 function eval_return_statement(stmt, env) {
     // display("goneeeeeeeeee");
     
-    display(evaluatefunc(return_statement_expression(stmt),env));
+    return evaluatefunc(return_statement_expression(stmt),env);
     // return undefined;
     // return "return" + stringify(make_return_value(
     //           evaluate(return_statement_expression(stmt),
@@ -756,17 +763,17 @@ const the_empty_environment = null;
 const primitive_functions = list(
        list("display",       display         ),
        list("error",         error           ),
-       list("+",             (x,y) => x + y  ),
-       list("-",             (x,y) => x - y  ),
-       list("*",             (x,y) => x * y  ),
-       list("/",             (x,y) => x / y  ),
-       list("%",             (x,y) => x % y  ),
-       list("===",           (x,y) => x === y),
-       list("!==",           (x,y) => x !== y),
-       list("<",             (x,y) => x <   y),
-       list("<=",            (x,y) => x <=  y),
-       list(">",             (x,y) => x >   y),
-       list(">=",            (x,y) => x >=  y),
+       list("+",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" + "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" + "+y+")":(is_string(x) && is_string(y))?"("+x+" + "+y+")": x + y  ),
+       list("-",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" - "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" - "+y+")":(is_string(x) && is_string(y))?"("+x+" - "+y+")": x - y  ),
+       list("*",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" * "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" * "+y+")":(is_string(x) && is_string(y))?"("+x+" * "+y+")": x * y  ),
+       list("/",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" / "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" / "+y+")":(is_string(x) && is_string(y))?"("+x+" / "+y+")": x / y  ),
+       list("%",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" % "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" % "+y+")":(is_string(x) && is_string(y))?"("+x+" % "+y+")": x % y  ),
+       list("===",           (x,y) => (is_string(x) && !is_string(y))?"("+x+" === "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" === "+y+")":(is_string(x) && is_string(y))?"("+x+" === "+y+")": x === y  ),
+       list("!==",           (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
+       list("<",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
+       list("<=",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
+       list(">",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
+       list(">=",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" !== "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" !== "+y+")":(is_string(x) && is_string(y))?"("+x+" !== "+y+")": x !== y  ),
        list("!",              x    =>   !   x)
        );
 
