@@ -275,9 +275,9 @@ function eval_sequence(stmts, env) {
     } else if (is_last_statement(stmts)) {
             const first_stmt_value = evaluate(first_statement(stmts),env);
             if(is_string(first_stmt_value)){
-                final_pro=first_stmt_value+";";
+                final_pro=final_pro+first_stmt_value+";";
             }else{
-                final_pro=stringify(first_stmt_value)+";";
+                final_pro=final_pro+stringify(first_stmt_value)+";";
             }
             return first_stmt_value;
     } else {
@@ -286,9 +286,9 @@ function eval_sequence(stmts, env) {
         
         if (is_return_value(first_stmt_value)) {
             if(is_string(first_stmt_value)){
-                final_pro="return"+first_stmt_value+";";
+                final_pro=final_pro+"return"+first_stmt_value+";";
             }else{
-                final_pro="return"+stringify(first_stmt_value)+";";
+                final_pro=final_pro+"return"+stringify(first_stmt_value)+";";
             }
             
             return first_stmt_value;
@@ -296,9 +296,9 @@ function eval_sequence(stmts, env) {
         } else {
             
             if(is_string(first_stmt_value)){
-                final_pro=first_stmt_value+";";
+                final_pro=final_pro+first_stmt_value+";";
             }else{
-                final_pro=stringify(first_stmt_value)+";";
+                final_pro=final_pro+stringify(first_stmt_value)+";";
             }
             return eval_sequence(
                 rest_statements(stmts),env);
@@ -368,8 +368,8 @@ function apply_primitive_function(fun, argument_list) {
 // the special value no_value_yet
 
 function apply(fun, args) {
-    // display(fun);
-    // display(args);
+    display(fun);
+    display(args);
     // constevaluation=0;
    if (is_primitive_function(fun)) {
     //   constevaluation=0;
@@ -403,7 +403,9 @@ function apply(fun, args) {
       }
    } else {
     //   constevaluation=1;
-      error(fun, "Unknown function type in apply");
+    // evaluate(parse())
+    return "doagain";
+    //   error(fun, "Unknown function type in apply");
    }
 }
 
@@ -704,6 +706,35 @@ function fapply(stmt,env){
     let e=apply(evaluate(operator(stmt), env),
                   list_of_values(operands(stmt), env));
     // return e;
+    if(e==="doagain"){
+        display("doagain");
+        display(operator(stmt));
+        let s="";
+        let l=list_of_values(operands(stmt), env);
+        for(let x=0;x<length(l)-1;x=x+1){
+            s=s+stringify(l[x])+",";
+        }
+        
+         s=s+stringify(l[length(l)-1]);
+        display(l);
+        let ss="("+lookup_name_value(name_of_name(operator(stmt)), env)+")("+s+");";
+        // display(parse(ss );
+        e= evaluate(parse( ss),env);
+        // let e=apply(evaluate(operator(stmt), env),
+        //           list_of_values(operands(stmt), env));
+        
+        
+    }
+    else{
+        "1";
+    }
+    if(e==="doagain"){
+        error( "Unknown function type in apply");
+    }
+    else{
+        1;
+    }
+        
     constevaluation=1;
     return e;
 }
@@ -859,6 +890,8 @@ function setup_environment() {
 const the_global_environment = setup_environment();
 
 function parse_and_eval(str) {
+     final_pro="";
+ constevaluation=1;
     if(is_sequence(parse(str))){
        str=str;
    }
