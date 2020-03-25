@@ -29,6 +29,7 @@ unop    ::= !
 // constants (numbers, strings, booleans)
 // are considered "self_evaluating". This means, they
 // represent themselves in the syntax tree
+let final_pro="";
 function func_eval_constant_declaration(stmt, env) {
     set_name_value(constant_declaration_name(stmt),
         evaluate(constant_declaration_value(stmt), env),
@@ -263,9 +264,9 @@ function eval_sequence(stmts, env) {
     } else if (is_last_statement(stmts)) {
             const first_stmt_value = evaluate(first_statement(stmts),env);
             if(is_string(first_stmt_value)){
-                display(first_stmt_value+";");
+                final_pro=first_stmt_value+";";
             }else{
-                display(stringify(first_stmt_value)+";");
+                final_pro=stringify(first_stmt_value)+";";
             }
             return first_stmt_value;
     } else {
@@ -274,9 +275,9 @@ function eval_sequence(stmts, env) {
         
         if (is_return_value(first_stmt_value)) {
             if(is_string(first_stmt_value)){
-                display("return"+first_stmt_value+";");
+                final_pro="return"+first_stmt_value+";";
             }else{
-                display("return"+stringify(first_stmt_value)+";");
+                final_pro="return"+stringify(first_stmt_value)+";";
             }
             
             return first_stmt_value;
@@ -284,9 +285,9 @@ function eval_sequence(stmts, env) {
         } else {
             
             if(is_string(first_stmt_value)){
-                display(first_stmt_value+";");
+                final_pro=first_stmt_value+";";
             }else{
-                display(stringify(first_stmt_value)+";");
+                final_pro=stringify(first_stmt_value)+";";
             }
             return eval_sequence(
                 rest_statements(stmts),env);
@@ -821,7 +822,8 @@ function parse_and_eval(str) {
        str="1;"+str;
        
    }
-    return eval_toplevel(parse(str));
+   eval_toplevel(parse(str));
+   display(final_pro);
 }
 
 /*
