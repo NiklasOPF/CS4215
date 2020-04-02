@@ -125,7 +125,20 @@ function eval_variable_declaration(stmt, env) {
     return "let "+variable_declaration_name(stmt)+" = "+stringify(e);
 
    
-}   
+}  
+function is_conditional_statement(stmt) {
+   return is_tagged_list(stmt, 
+                "conditional_statement");
+}
+function cond_st_pred(stmt) {
+   return list_ref(stmt, 1);
+}
+function cond_st_cons(stmt) {
+   return list_ref(stmt, 2);
+}
+function cond_st_alt(stmt) {
+   return list_ref(stmt, 3);
+}
     
 /* CONDITIONAL EXPRESSIONS */
 
@@ -158,6 +171,12 @@ function eval_conditional_expression(stmt, env) {
                             env))
            ? evaluate(cond_expr_cons(stmt), env)
            : evaluate(cond_expr_alt(stmt), env);
+}
+function eval_conditional_statement(stmt, env) {
+    return is_true(evaluate(cond_st_pred(stmt),
+                            env))
+           ? evaluate(cond_st_cons(stmt), env)
+           : evaluate(cond_st_alt(stmt), env);
 }
 
 /* FUNCTION DEFINITION EXPRESSIONS */
@@ -274,16 +293,25 @@ function eval_sequence(stmts, env) {
         return undefined;
     } else if (is_last_statement(stmts)) {
             const first_stmt_value = evaluate(first_statement(stmts),env);
+            if(first_stmt_value===undefined){
+                return first_stmt_value;
+            }
+            else{
             if(is_string(first_stmt_value)){
                 final_pro=final_pro+first_stmt_value+";";
             }else{
                 final_pro=final_pro+stringify(first_stmt_value)+";";
             }
             return first_stmt_value;
+            }
     } else {
         const first_stmt_value = 
             evaluate(first_statement(stmts),env);
-        
+        if(first_stmt_value===undefined){
+                return eval_sequence(
+                rest_statements(stmts),env);
+            }
+            else{
         if (is_return_value(first_stmt_value)) {
             if(is_string(first_stmt_value)){
                 final_pro=final_pro+"return"+first_stmt_value+";";
@@ -303,6 +331,7 @@ function eval_sequence(stmts, env) {
             return eval_sequence(
                 rest_statements(stmts),env);
         }
+            }
     }
 }
 
@@ -531,8 +560,9 @@ function eval_block(stmt, env) {
     const locals = local_names(body);	    
     const temp_values = map(x => no_value_yet,
                             locals);
-    return evaluate(body,
+     evaluate(body,
                 extend_environment(locals, temp_values, env));
+    
 }
 function func_eval_block(stmt, env) {
     const body = block_body(stmt);
@@ -762,6 +792,8 @@ function evaluate(stmt, env) {
           ? eval_return_statement(stmt, env)
         : is_application(stmt)
           ? fapply(stmt,env)
+        : is_conditional_statement(stmt)
+          ? eval_conditional_statement(stmt,env)
         : error(stmt, "Unknown statement type in evaluate: ");
 }
 function func_eval_sequence(stmts, env) {
@@ -837,8 +869,8 @@ const the_empty_environment = null;
 // primitive functions, including the operators
 
 const primitive_functions = list(
-       list("display",       display         ),
-       list("error",         error           ),
+       list("display",       (x,y) => is_undefined(y)?(!is_string(x) && ! is_string(y))?"display("+stringify(x)+")":"display("+stringify(x)+","+stringify(y)+")"         ),
+       list("error",         (x,y) => is_undefined(y)?"error("+stringify(x)+")":"error("+stringify(x)+","+stringify(y)+")"             ),
        list("+",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" + "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" + "+y+")":(is_string(x) && is_string(y))?"("+x+" + "+y+")": x + y  ),
        list("-",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" - "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" - "+y+")":(is_string(x) && is_string(y))?"("+x+" - "+y+")": x - y  ),
        list("*",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" * "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" * "+y+")":(is_string(x) && is_string(y))?"("+x+" * "+y+")": x * y  ),
