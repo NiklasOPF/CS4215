@@ -31,6 +31,7 @@ unop    ::= !
 // represent themselves in the syntax tree
 let final_pro="";
 let constevaluation=1;
+let checkreturn=0;
 function func_eval_constant_declaration(stmt, env) {
     set_name_value(constant_declaration_name(stmt),
         evaluate(constant_declaration_value(stmt), env),
@@ -235,8 +236,14 @@ function partial_eval(stmt,env){
         
     }
     let e=evaluatefunc(make_block(function_definition_body(stmt)),exenv);
-    
+    if(checkreturn===1){
+        checkreturn =0;
     return "("+s+")"+" => "+(is_string(e)?e:stringify(e));
+        
+    }
+    else{
+        return "("+s+")"+" => "+"undefined";
+    }
 }
 // evluating a function definition expression
 // results in a function value. Note that the
@@ -319,7 +326,7 @@ function eval_sequence(stmts, env) {
                 rest_statements(stmts),env);
             }
             else{
-        if (is_return_value(first_stmt_value)) {
+        if (is_return_statement(first_statement(stmts))) {
             if(is_string(first_stmt_value)){
                 final_pro=final_pro+"return"+first_stmt_value+";";
             }else{
@@ -518,7 +525,8 @@ function eval_return_statement(stmt, env) {
         
     }
     else{
-        display("goneeeeeeeeee");
+        // display("goneeeeeeeeee");
+        checkreturn =1;
         return evaluatefunc(return_statement_expression(stmt),env);
     }
     
@@ -812,7 +820,9 @@ function func_eval_sequence(stmts, env) {
     } else {
         const first_stmt_value = 
             evaluatefunc(first_statement(stmts),env);
-        if (is_return_value(first_stmt_value)) {
+        
+        if (is_return_statement(first_statement(stmts))) {
+            display("fsafsa");
             return first_stmt_value;
         } else {
             return func_eval_sequence(
