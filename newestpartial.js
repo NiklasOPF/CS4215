@@ -178,6 +178,13 @@ function eval_conditional_statement(stmt, env) {
            ? evaluate(cond_st_cons(stmt), env)
            : evaluate(cond_st_alt(stmt), env);
 }
+function eval_func_conditional_statement(stmt, env) {
+    let predvar=evaluate(cond_st_pred(stmt),
+                            env);
+                            
+    return   (is_string(predvar)?predvar:stringify(evaluate(cond_st_pred(stmt),
+                            env))) + "? "  + stringify(evaluatefunc(cond_st_cons(stmt), env)) + ": " + stringify(evaluatefunc(cond_st_alt(stmt), env)) ;
+}
 
 /* FUNCTION DEFINITION EXPRESSIONS */
 
@@ -511,6 +518,7 @@ function eval_return_statement(stmt, env) {
         
     }
     else{
+        display("goneeeeeeeeee");
         return evaluatefunc(return_statement_expression(stmt),env);
     }
     
@@ -836,6 +844,8 @@ function evaluatefunc(stmt, env) {
         : is_application(stmt)
           ? apply(evaluate(operator(stmt), env),
                   list_of_values(operands(stmt), env))
+        : is_conditional_statement(stmt)
+          ? eval_func_conditional_statement(stmt,env)
         : error(stmt, "Unknown statement type in evaluate: ");
 }
 
@@ -869,8 +879,8 @@ const the_empty_environment = null;
 // primitive functions, including the operators
 
 const primitive_functions = list(
-       list("display",       (x,y) => is_undefined(y)?(!is_string(x) && ! is_string(y))?"display("+stringify(x)+")":"display("+stringify(x)+","+stringify(y)+")"         ),
-       list("error",         (x,y) => is_undefined(y)?"error("+stringify(x)+")":"error("+stringify(x)+","+stringify(y)+")"             ),
+       list("display",       (x) => (!is_string(x))?"display("+stringify(x)+")":  "display('"+x+"')"      ),
+       list("error",         (x) => (!is_string(x))?"error("+stringify(x)+")":  "error('"+x+"')"  ),
        list("+",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" + "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" + "+y+")":(is_string(x) && is_string(y))?"("+x+" + "+y+")": x + y  ),
        list("-",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" - "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" - "+y+")":(is_string(x) && is_string(y))?"("+x+" - "+y+")": x - y  ),
        list("*",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" * "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" * "+y+")":(is_string(x) && is_string(y))?"("+x+" * "+y+")": x * y  ),
