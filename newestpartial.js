@@ -162,6 +162,9 @@ function cond_expr_alt(stmt) {
 function is_true(x) {
     return x === true;
 }
+function is_false(x) {
+    return x === false;
+}
 
 // the meta-circular evaluation of conditional expressions
 // evaluates the predicate and then the appropriate
@@ -172,6 +175,18 @@ function eval_conditional_expression(stmt, env) {
                             env))
            ? evaluate(cond_expr_cons(stmt), env)
            : evaluate(cond_expr_alt(stmt), env);
+}
+function func_eval_conditional_expression(stmt, env) {
+    display(evaluatefunc(cond_expr_pred(stmt),
+                            env));
+    return is_true(evaluatefunc(cond_expr_pred(stmt),
+                            env))
+           ? evaluatefunc(cond_expr_cons(stmt), env)
+           : is_false(evaluatefunc(cond_expr_pred(stmt),
+                            env))
+           ? evaluatefunc(cond_expr_alt(stmt), env)
+           : evaluatefunc(cond_expr_pred(stmt),
+                            env)+"?"+(is_string(evaluatefunc(cond_expr_cons(stmt), env))?evaluatefunc(cond_expr_cons(stmt), env):stringify(evaluatefunc(cond_expr_cons(stmt), env)))+":"+(is_string(evaluatefunc(cond_expr_alt(stmt), env))?evaluatefunc(cond_expr_alt(stmt), env):stringify(evaluatefunc(cond_expr_alt(stmt), env)));
 }
 function eval_conditional_statement(stmt, env) {
     return is_true(evaluate(cond_st_pred(stmt),
@@ -842,7 +857,7 @@ function evaluatefunc(stmt, env) {
         : is_assignment(stmt)
           ? eval_assignment(stmt, env)
         : is_conditional_expression(stmt)
-          ? eval_conditional_expression(stmt, env)
+          ? func_eval_conditional_expression(stmt, env)
         : is_function_definition(stmt)
           ? eval_function_definition(stmt, env)
         : is_sequence(stmt)
