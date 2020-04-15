@@ -1,14 +1,11 @@
 /*
 Partial Evaluator for Source §2 sublanguage with booleans, conditionals,
 sequences, functions, constants and blocks
-
-The covered Source §1 sublanguage is:
+The covered Source §2 sublanguage is:
 stmt    ::= const name = expr ; 
-         |  let name = expr ; 
          |  function name(params) block
          |  expr ; 
          |  stmt stmt
-         |  name = expr ; 
          |  block
 block   ::= { stmt }
 expr    ::= expr ? expr : expr
@@ -22,21 +19,19 @@ binop   ::= + | - | * | / | % | < | > | <= | >=
 unop    ::= !
 */
 
-/* CONSTANTS: NUMBERS, STRINGS, TRUE, FALSE */
+/* CONSTANTS: NUMBERS, TRUE, FALSE */
 
-// constants (numbers, strings, booleans)
+// constants (numbers, booleans)
 // are considered "self_evaluating". This means, they
 // represent themselves in the syntax tree
-// let final_pro="";
+
 let constevaluation=1;
-// let checkreturn=0; 
-// let checkreturnifelse=null;
 let checkcondst=0;
-// let somea=0;
-// let someb=undefined;
-// let somec=undefined;
 let some=null;
 
+// constants (numbers, booleans)
+// are considered "self_evaluating". This means, they
+// represent themselves in the syntax tree
 
 function is_self_evaluating(stmt) {
     return is_number(stmt) ||
