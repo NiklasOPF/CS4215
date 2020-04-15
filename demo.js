@@ -514,40 +514,35 @@ function apply(fun, args,final_pro) {
         return e;
         
     } else if (is_compound_function(fun)) {
-        // display("entered");
-        // display(fun);
         const body = function_body(fun);
-      const locals = local_names(body);
-      const names = insert_all(function_parameters(fun),
+        const locals = local_names(body);
+        const names = insert_all(function_parameters(fun),
                                locals);
-      const temp_values = map(x => no_value_yet,
+        const temp_values = map(x => no_value_yet,
                               locals);
-      const values = append(args, temp_values);			   
-      const result =
-         evaluate(body,
-                  extend_environment(
-                      names,
-                      values,
-                      function_environment(fun)),final_pro);
-                    //   display(result);
-      if (is_return_value(result)) {
-         let e= return_value_content(result);
-         return e;
+        const values = append(args, temp_values);			   
+        const result = evaluate(body,
+                                extend_environment(
+                                names,
+                                values,
+                                function_environment(fun)),final_pro);
+
+        if (is_return_value(result)) {
+            let e= return_value_content(result);
+            return e;
          
-      } else {
-          return undefined;
-      }
-   } else {
+        } else {
+            return undefined;
+        }
+    } else {
        return "doagain";
-    //   error(fun, "Unknown function type in apply");
-   }
+    }
 }
 
 function fapply(stmt,env,final_pro){
     constevaluation=0;
     let e=apply(evaluate(operator(stmt), env,final_pro),
                   list_of_values(operands(stmt), env,final_pro),final_pro);
-            //  display(e);
     if(e==="doagain"){
         let s="";
         let l=list_of_values(operands(stmt), env,final_pro);
@@ -558,31 +553,23 @@ function fapply(stmt,env,final_pro){
         }
         
         s=s+(is_string(head(ll))?head(ll):stringify(head(ll)));
-        // display(operator(stmt));
         let ss="("+lookup_name_value(name_of_name(operator(stmt)), env)+")("+s+")";
 
         if(lookup_name_value(name_of_name(operator(stmt)), env)=== name_of_name(operator(stmt))){
             e=ss;
-            // display(e);
-            }else{
-                ss=ss+";";
-                e= evaluate(parse( ss),env,final_pro);
-            }
-        
-        
-    }
-    
-    else{
+        }else{
+            ss=ss+";";
+            e= evaluate(parse( ss),env,final_pro);
+        }
+    }else{
         "1";
     }
-    // display(e);
     if(e==="doagain"){
         error( "Unknown function type in apply");
     }
     else{
         1;
     }
-        
     constevaluation=1;
     return e;
 }
@@ -657,15 +644,8 @@ function eval_return_statement(stmt, env,final_pro) {
                         env,final_pro));
     }
     else{
-        // display("goneeeeeeeeee");
-        // checkreturn  =1;
         return pair(evaluatefunc(return_statement_expression(stmt),env,final_pro),1);
     }
-    
-    // return undefined;
-    // return "return" + stringify(make_return_value(
-    //           evaluate(return_statement_expression(stmt),
-    //                     env)));
 }
 
 /* ASSIGNMENT */
@@ -725,18 +705,15 @@ function eval_block(stmt, env,final_pro) {
 function func_eval_block(stmt, env,final_pro) {
     const body = block_body(stmt);
     const locals = local_names(body);	    
-    const temp_values = map(x => no_value_yet,
-                            locals);
-                            // display(body);
+    const temp_values = map(x => no_value_yet, locals);
     let wowe= evaluatefunc(body,
-                extend_environment(locals, temp_values, env),final_pro);
-            if (is_pair(wowe) && tail(wowe) ===1) {
-            
-            return wowe;
-        } else {
-            return [undefined,0];
-        }
-
+                            extend_environment(locals, temp_values, env),
+                            final_pro);
+    if (is_pair(wowe) && tail(wowe) ===1) {
+        return wowe;
+    } else {
+        return [undefined,0];
+    }
 }
 /* ENVIRONMENTS */
 
@@ -929,25 +906,17 @@ function func_eval_sequence(stmts, env,final_pro) {
     if (is_empty_sequence(stmts)) {
         return undefined;
     } else if (is_last_statement(stmts)) {
-            let wowe= evaluatefunc(first_statement(stmts),env,final_pro);
-            if (is_pair(wowe) && tail(wowe) ===1) {
-            // display("fsafsa");
+        let wowe= evaluatefunc(first_statement(stmts),
+                                env,
+                                final_pro);
+        if (is_pair(wowe) && tail(wowe) ===1) {
             return wowe;
         } else {
             return [undefined,0];
         }
-            
     } else {
-        
         const first_stmt_value = 
             evaluatefunc(first_statement(stmts),env,final_pro);
-            //  if (is_return_statement(first_statement(stmts))) {
-            //      checkreturn =1;
-            //  }
-            //  else{
-            //      checkreturn =checkreturn;
-            //  }
-        
         if (is_pair(first_stmt_value) && tail(first_stmt_value) ===1) {
             return first_stmt_value;
         } else {
@@ -956,6 +925,7 @@ function func_eval_sequence(stmts, env,final_pro) {
         }
     }
 }
+
 function evaluatefunc(stmt, env,final_pro) {
    return is_self_evaluating(stmt)
           ?  stmt
