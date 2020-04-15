@@ -1,9 +1,7 @@
 /*
 Partial Evaluator for Source §2 sublanguage with booleans, conditionals,
 sequences, functions, constants and blocks
-This is an evaluator for a language that lets you declare
-functions, variables and constants, apply functions, and
-carry out simple arithmetic calculations, boolean operations.
+
 The covered Source §1 sublanguage is:
 stmt    ::= const name = expr ; 
          |  let name = expr ; 
@@ -39,7 +37,6 @@ let checkcondst=0;
 // let somec=undefined;
 let some=null;
 
-//The code begins....
 
 function is_self_evaluating(stmt) {
     return is_number(stmt) ||
@@ -103,6 +100,7 @@ function eval_constant_declaration(stmt, env,final_pro) {
     return "const "+constant_declaration_name(stmt)+" = "+(is_string(e)?e:stringify(e));
 }
 
+
 function func_eval_constant_declaration(stmt, env,final_pro) {
     set_name_value(constant_declaration_name(stmt),
         evaluate(constant_declaration_value(stmt), env,final_pro),
@@ -127,7 +125,6 @@ function eval_variable_declaration(stmt, env,final_pro) {
         e,
         env);
     return "let "+variable_declaration_name(stmt)+" = "+stringify(e);
-
 }  
 
 function is_conditional_statement(stmt) {
@@ -181,16 +178,14 @@ function eval_conditional_expression(stmt, env,final_pro) {
 }
 
 function func_eval_conditional_expression(stmt, env, final_pro) {
-    // display(evaluatefunc(cond_expr_pred(stmt),
-    //                         env));
     return is_true(evaluatefunc(cond_expr_pred(stmt),
-                            env,final_pro))
-           ? evaluatefunc(cond_expr_cons(stmt), env,final_pro)
+                            env, final_pro))
+           ? evaluatefunc(cond_expr_cons(stmt), env, final_pro)
            : is_false(evaluatefunc(cond_expr_pred(stmt),
-                            env,final_pro))
-           ? evaluatefunc(cond_expr_alt(stmt), env,final_pro)
+                            env, final_pro))
+           ? evaluatefunc(cond_expr_alt(stmt), env, final_pro)
            : evaluatefunc(cond_expr_pred(stmt),
-                            env,final_pro)+"?"+(is_string(evaluatefunc(cond_expr_cons(stmt), env,final_pro))?evaluatefunc(cond_expr_cons(stmt), env,final_pro):stringify(evaluatefunc(cond_expr_cons(stmt), env,final_pro)))+":"+(is_string(evaluatefunc(cond_expr_alt(stmt), env,final_pro))?evaluatefunc(cond_expr_alt(stmt), env,final_pro):stringify(evaluatefunc(cond_expr_alt(stmt), env,final_pro)));
+                            env, final_pro)+"?"+(is_string(evaluatefunc(cond_expr_cons(stmt), env,final_pro))?evaluatefunc(cond_expr_cons(stmt), env,final_pro):stringify(evaluatefunc(cond_expr_cons(stmt), env,final_pro)))+":"+(is_string(evaluatefunc(cond_expr_alt(stmt), env,final_pro))?evaluatefunc(cond_expr_alt(stmt), env,final_pro):stringify(evaluatefunc(cond_expr_alt(stmt), env,final_pro)));
 }
 
 function eval_conditional_statement(stmt, env,final_pro) {
@@ -200,92 +195,69 @@ function eval_conditional_statement(stmt, env,final_pro) {
            : evaluate(cond_st_alt(stmt), env,final_pro);
 } 
 
-// let withini=0;
-// let withine=0;
 
 function eval_func_conditional_statement(stmt, env,final_pro) {
-    // display(stmt);
     let somea=0;
-let someb=0;
-let somec=0;
-let checkreturn =0;
+    let someb=0;
+    let somec=0;
+    let checkreturn =0;
     let predvar=evaluatefunc(cond_st_pred(stmt),
                             env,final_pro);
     somea=predvar;
     checkcondst=1;
-                            // checkreturn =1;
+    // checkreturn =1;
     
-                            let temp=checkreturn;
-                            // let withinxi=withini;
-                            // withini=withini+1;
+    let temp=checkreturn;
+    // let withinxi=withini;
+    // withini=withini+1;
                             
-                            let consvar=0;
-                            // display(1);
-                            if(is_pair(evaluatefunc(cond_st_cons(stmt), env,final_pro))){
-                             consvar=head(evaluatefunc(cond_st_cons(stmt), env,final_pro));
+    let consvar=0;
+    // display(1);
+    if(is_pair(evaluatefunc(cond_st_cons(stmt), env,final_pro))){
+    consvar=head(evaluatefunc(cond_st_cons(stmt), env,final_pro));
                             
-                            checkreturn=tail(evaluatefunc(cond_st_cons(stmt), env,final_pro));}
-                            else{
-                                consvar=evaluatefunc(cond_st_cons(stmt), env,final_pro);
-                                checkreturn =0;
+    checkreturn=tail(evaluatefunc(cond_st_cons(stmt), env,final_pro));}
+    else{
+        consvar=evaluatefunc(cond_st_cons(stmt), env,final_pro);
+        checkreturn =0;
                                 
-                            }
-                            // display(2);
-                            // withini=withini-1;
-                            // checkreturn=tail(evaluatefunc(cond_st_cons(stmt), env,final_pro));
-                            if(checkreturn - temp===1){
-                                temp=checkreturn;
-                                checkreturn =0;
-                            }
-                            else{
-                                checkreturn =0;
-                            }
-                            // let withinxe=withine;
-                            // withine=withine+1;
-                            let altvar=0;
-                            if(is_pair(evaluatefunc(cond_st_alt(stmt), env,final_pro))){
-                             altvar=head(evaluatefunc(cond_st_alt(stmt), env,final_pro));
-                            
-                            checkreturn=tail(evaluatefunc(cond_st_alt(stmt), env,final_pro));}
-                            else{
-                                altvar=evaluatefunc(cond_st_alt(stmt), env,final_pro);
-                                checkreturn =0;
+    }
+
+    if(checkreturn - temp===1){
+        temp=checkreturn;
+        checkreturn =0;
+    }else{
+        checkreturn =0;
+    }
+
+    let altvar=0;
+    if(is_pair(evaluatefunc(cond_st_alt(stmt), env,final_pro))){
+        altvar=head(evaluatefunc(cond_st_alt(stmt), env,final_pro));
+        checkreturn=tail(evaluatefunc(cond_st_alt(stmt), env,final_pro));
+    }else{
+        altvar=evaluatefunc(cond_st_alt(stmt), env,final_pro);
+        checkreturn =0;
+    }
+
+    let tempb=checkreturn;
+    if(temp*checkreturn===1){
+        checkreturn =1;
                                 
-                            }
-                            // display(3);
-                            // withine=withine-1;
-                            let tempb=checkreturn;
-                            if(temp*checkreturn===1){
-                                checkreturn =1;
-                                
-                            }
-                            else{
-                                checkreturn=0;
-                                // checkreturnifelse=pair(pair(temp,checkreturn),checkreturnifelse);
-                            }
-                            if(temp===1){
-                                someb=consvar;
-                            
-                            }
-                            else{
-                                someb=undefined;
-                                
-                            }
-                            if(tempb===1){
-                                somec=altvar;
-                            
-                            }
-                            else{
-                                somec=undefined;
-                                
-                            }
-            // display(some);
-            some=pair(pair(somea,pair(someb,somec)),some);
-            // display(some);
-            return pair(checkreturn,checkreturn);
-                         
-    // return   (is_string(predvar)?predvar:stringify(evaluatefunc(cond_st_pred(stmt),
-    //                         env))) + "? "  + (is_string(consvar)?consvar:(stringify(consvar))) + ": " + (is_string(altvar)?altvar:(stringify(altvar))) ;
+    }else{
+        checkreturn=0;
+    }
+    if(temp===1){
+        someb=consvar;         
+    }else{
+        someb=undefined;
+    }
+    if(tempb===1){
+        somec=altvar;
+    }else{
+        somec=undefined;
+    }
+    some=pair(pair(somea,pair(someb,somec)),some);
+    return pair(checkreturn,checkreturn);
 }
 
 /* FUNCTION DEFINITION EXPRESSIONS */
@@ -346,46 +318,36 @@ function partial_eval(stmt,env,final_pro){
     }else{e=e;}
     
     
-        if(checkcondst===1){
-            // display(e);
-            // display(some);
-            while(some!==null){
-    let wow=head(some);
-    // display(wow);
-    some=tail(some);
-    let somea=head(wow);
-    let someb=head(tail(wow));
-    let somec=tail(tail(wow));
+    if(checkcondst===1){
+        while(some!==null){
+            let wow=head(some);
+            some=tail(some);
+            let somea=head(wow);
+            let someb=head(tail(wow));
+            let somec=tail(tail(wow));
             if(someb===undefined){
-        someb=e;
-    }
-    else{
-        someb=someb;
-    }
-    if(somec===undefined){
-        somec=e;
-    }
-    else{
-        somec=somec;
-    }
-    // display(somea);
-    // display(someb);
-    // display(somec);
-    
+                someb=e;
+            }else{
+                someb=someb;
+            }
+            if(somec===undefined){
+                somec=e;
+            }else{
+                somec=somec;
+            }
             
-        e="("+(is_string(somea)?somea:stringify(somea)) + "? "  + (is_string(someb)?someb:(stringify(someb))) + ": " + (is_string(somec)?somec:(stringify(somec))) +")";
-    somea=undefined;
+            e="("+(is_string(somea)?somea:stringify(somea)) + "? "  + (is_string(someb)?someb:(stringify(someb))) + ": " + (is_string(somec)?somec:(stringify(somec))) +")";
+            somea=undefined;
             someb=undefined;
             somec=undefined;
-        }}else{e=e;}
+        }
+    }else{e=e;}
+    
     if(checkreturn===1 || checkcondst===1){
         checkreturn =0;
         checkcondst=0;
-    return "("+s+")"+" => "+(is_string(e)?e:stringify(e));
-        
-    }
-    else{
-        // display(checkreturn);
+        return "("+s+")"+" => "+(is_string(e)?e:stringify(e));
+    }else{
         return "("+s+")"+" => "+"undefined";
     }
 }
@@ -402,13 +364,10 @@ function eval_function_definition(stmt, env,final_pro) {
                   function_definition_parameters(stmt)),
               function_definition_body(stmt),
               env);
-        
-        
     }
     else{
         return partial_eval(stmt,env,final_pro);
     }
-    
 }
 
 /* SEQUENCES */
@@ -450,28 +409,19 @@ function eval_sequence(stmts, env, final_pro) {
     if (is_empty_sequence(stmts)) {
         return undefined;
     } else if (is_last_statement(stmts)) {
-            const first_stmt_value = evaluate(first_statement(stmts),env,final_pro);
-            // if(first_stmt_value===undefined){
-            //     return final_pro;
-            // }else{
-                if (is_block(first_statement(stmts)) || is_conditional_statement(first_statement(stmts))){
-                final_pro=final_pro+first_stmt_value;
-            }
-                else if(is_string(first_stmt_value)){
-                final_pro=final_pro+first_stmt_value+";";
-            }else{
-                final_pro=final_pro+stringify(first_stmt_value)+";";
-            }
-            return final_pro;
-            // }
+        const first_stmt_value = evaluate(first_statement(stmts),env,final_pro);
+        if (is_block(first_statement(stmts)) || is_conditional_statement(first_statement(stmts))){
+            final_pro=final_pro+first_stmt_value;
+        }else if(is_string(first_stmt_value)){
+            final_pro=final_pro+first_stmt_value+";";
+        }else{
+            final_pro=final_pro+stringify(first_stmt_value)+";";
+        }
+        return final_pro;
     } else {
         const first_stmt_value = 
             evaluate(first_statement(stmts),env,final_pro);
-        // if(first_stmt_value===undefined){
-        //         return eval_sequence(
-        //         rest_statements(stmts),env,final_pro);
-        //     }
-            // else{
+            
         if (is_return_statement(first_statement(stmts))) {
             if(is_string(first_stmt_value)){
                 final_pro=final_pro+"return"+first_stmt_value+";";
@@ -493,7 +443,6 @@ function eval_sequence(stmts, env, final_pro) {
             return eval_sequence(
                 rest_statements(stmts),env,final_pro);
         }
-            // }
     }
 }
 
