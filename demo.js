@@ -200,14 +200,12 @@ function eval_func_conditional_statement(stmt, env,final_pro) {
                             env,final_pro);
     somea=predvar;
     checkcondst=1;
-    // checkreturn =1;
+
     
     let temp=checkreturn;
-    // let withinxi=withini;
-    // withini=withini+1;
+
                             
     let consvar=0;
-    // display(1);
     if(is_pair(evaluatefunc(cond_st_cons(stmt), env,final_pro))){
     consvar=head(evaluatefunc(cond_st_cons(stmt), env,final_pro));
                             
@@ -289,6 +287,8 @@ function function_body(f) {
 function function_environment(f) {
     return list_ref(f, 3);
 }
+
+// Partially evaluating function definition
 
 function partial_eval(stmt,env,final_pro){
    
@@ -440,6 +440,31 @@ function eval_sequence(stmts, env, final_pro) {
         }
     }
 }
+
+function func_eval_sequence(stmts, env,final_pro) {
+    if (is_empty_sequence(stmts)) {
+        return undefined;
+    } else if (is_last_statement(stmts)) {
+        let wowe= evaluatefunc(first_statement(stmts),
+                                env,
+                                final_pro);
+        if (is_pair(wowe) && tail(wowe) ===1) {
+            return wowe;
+        } else {
+            return [undefined,0];
+        }
+    } else {
+        const first_stmt_value = 
+            evaluatefunc(first_statement(stmts),env,final_pro);
+        if (is_pair(first_stmt_value) && tail(first_stmt_value) ===1) {
+            return first_stmt_value;
+        } else {
+            return func_eval_sequence(
+                rest_statements(stmts),env,final_pro);
+        }
+    }
+}
+
 
 /* FUNCTION APPLICATION */
 
@@ -897,29 +922,6 @@ function evaluate(stmt, env,final_pro) {
           ? eval_conditional_statement(stmt,env,final_pro)
         : error(stmt, "Unknown statement type in evaluate: ");
 }
-function func_eval_sequence(stmts, env,final_pro) {
-    if (is_empty_sequence(stmts)) {
-        return undefined;
-    } else if (is_last_statement(stmts)) {
-        let wowe= evaluatefunc(first_statement(stmts),
-                                env,
-                                final_pro);
-        if (is_pair(wowe) && tail(wowe) ===1) {
-            return wowe;
-        } else {
-            return [undefined,0];
-        }
-    } else {
-        const first_stmt_value = 
-            evaluatefunc(first_statement(stmts),env,final_pro);
-        if (is_pair(first_stmt_value) && tail(first_stmt_value) ===1) {
-            return first_stmt_value;
-        } else {
-            return func_eval_sequence(
-                rest_statements(stmts),env,final_pro);
-        }
-    }
-}
 
 function evaluatefunc(stmt, env,final_pro) {
    return is_self_evaluating(stmt)
@@ -1044,20 +1046,6 @@ function partial_evaluator(str) {
  
 }
 
-/*
-examples:
-parse_and_eval("1;");
-parse_and_eval("1 + 1;");
-parse_and_eval("1 + 3 * 4;");
-parse_and_eval("(1 + 3) * 4;");
-parse_and_eval("1.4 / 2.3 + 70.4 * 18.3;");
-parse_and_eval("true;");
-parse_and_eval("! (1 === 1);");
-parse_and_eval("(! (1 === 1)) ? 1 : 2;");
-parse_and_eval("'hello' + ' ' + 'world';");
-parse_and_eval("function factorial(n) { return n === 1 ? 1 : n * factorial(n - 1);} factorial(4);");
-*/
-
 
 // --------------------------examples----------------------
 
@@ -1067,28 +1055,27 @@ parse_and_eval("function factorial(n) { return n === 1 ? 1 : n * factorial(n - 1
 // partial_evaluator("const x=2;\
 // const y=5;\
 // if(x===y){\
-//     display(10); \
+//     display(x); \
+//     display(y);\
 // }\
 // else{\
-//     display(20);\
+//     display(x);\
+//     display(y);\
 // }");
 
 
-// partial_evaluator("{const x=3;}const y=2;x+y;");
+// partial_evaluator("{const x=3;x+4;}const y=2;x+y;");
 
+// partial_evaluator("{const x=3;x+4;}const y=2;y;");
 
-// partial_evaluator("{const x=3;}const y=2;y;");
-
-// partial_evaluator("if(true){\
-//     const www=1;\
-//     const yyy=www+1;\
-//     yyy;\
+// partial_evaluator("const z=3;if(true){\
+//     const w=1;\
+//     const y=w+1+z;\
+//     y;\
 // }\
 // else{4;}");
 
 // partial_evaluator("56;(! (1 === 1)) ? 1 : 2;");
-
-// partial_evaluator("display(3);display(5);");
 
 // partial_evaluator("const a=2;const f=(x,y,z)=>x+y*a;f(2,3,1);");
 
@@ -1108,4 +1095,4 @@ parse_and_eval("function factorial(n) { return n === 1 ? 1 : n * factorial(n - 1
 
 // --------------------------further enhancments----------------------
 
-//partial_evaluator("{const x = 3;} 5+2;"); // can remove this block
+// partial_evaluator("{const x = 3;} 5+2;"); // can remove this block
