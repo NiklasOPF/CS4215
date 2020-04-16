@@ -883,11 +883,10 @@ function list_of_values(exps, env,final_pro) {
     if (no_operands(exps)) {
         return null;
     } else {
-        // constevaluation=0;
         let e= pair(evaluate(first_operand(exps), env,final_pro),
                     list_of_values(rest_operands(exps), env,final_pro));
         
-        // constevaluation=1;
+        
         return e;
    }
 }
@@ -1158,9 +1157,3 @@ function partial_evaluator(str) {
 
 // partial_evaluator("function f(x){if(x===1){function g(z,y){return x+y+z;}return g(2,1);}else{return 4;}}");
 
-
-
-    
-// --------------------------further enhancments----------------------
-
-// partial_evaluator("{const x = 3;} 5+2;"); // can remove this block
