@@ -250,6 +250,7 @@ function eval_func_conditional_statement(stmt, env,final_pro) {
         somec=undefined;
     }
     some=pair(pair(somea,pair(someb,somec)),some);
+    checkcondst=1;
     return pair(checkreturn,checkreturn);
 }
 
@@ -1155,6 +1156,7 @@ function partial_evaluator(str) {
 // }else{return x;}\
 // return 2;}f(3);");
 
+// partial_evaluator("function f(x){if(x===1){function g(z,y){return x+y+z;}return g(2,1);}else{return 4;}}");
 
 
 
