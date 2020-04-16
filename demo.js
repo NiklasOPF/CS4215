@@ -1115,6 +1115,10 @@ function partial_evaluator(str) {
 
 // partial_evaluator("function f(x){return x===1?1:f(x-1);}(f)(3);");
 
+// partial_evaluator("function f(x,y){\
+// {const a=2;return a===2?2*x-y*3:3;}\
+// const z=3; return z/x;}f(1,1);");
+
 // partial_evaluator("const a=2;function f(x){const z=2;\
 // if(x===z){\
 // return 8;\
@@ -1123,12 +1127,35 @@ function partial_evaluator(str) {
 //     display(10);\
 //     return 4;\
 // }\
-// return 2;}");
+// return 2;}f(3);");
+
+// partial_evaluator("function factorial(n){\
+// if(n===9){\
+//     4;\
+// }\
+// else{return 2;}\
+// return n===1?1:4;}\
+// ");
 
 
 // partial_evaluator("function factorial(n){\
 // return n===1?1:n*factorial(n-1);}\
 // factorial(4);");
+
+// partial_evaluator("function f(x){\
+// function g(y){ return x/y;}\
+// return g(3);}f(6);");
+
+// partial_evaluator("\
+// function f(x){\
+// const z=2;\
+// if(x===1){return x;\
+// }else{4;}\
+// if(x===z){x;\
+// }else{return x;}\
+// return 2;}f(3);");
+
+
 
 
     
