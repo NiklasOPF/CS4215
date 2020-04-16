@@ -314,6 +314,7 @@ function partial_eval(stmt,env,final_pro){
     
     
     if(checkcondst===1){
+        // display(some);
         while(some!==null){
             let wow=head(some);
             some=tail(some);
@@ -474,7 +475,8 @@ function func_eval_sequence(stmts, env,final_pro) {
 // and have "operator" and "operands"
 
 function is_application(stmt) {
-   return is_tagged_list(stmt, "application");
+   return is_tagged_list(stmt, "application") ||
+          is_tagged_list(stmt, "boolean_operation");
 }
 function operator(stmt) {
    return head(tail(stmt));
@@ -984,6 +986,8 @@ const primitive_functions = list(
        list("pair",          (x,y) => pair(x,y)),
        list("display",       (x) => (!is_string(x))?"display("+stringify(x)+")":  "display('"+x+"')"      ),
        list("error",         (x) => (!is_string(x))?"error("+stringify(x)+")":  "error('"+x+"')"  ),
+       list("&&",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" && "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" && "+y+")":(is_string(x) && is_string(y))?"("+x+" && "+y+")": x && y  ),
+       list("||",            (x,y) => (is_string(x) && !is_string(y))?"("+x+" || "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" || "+y+")":(is_string(x) && is_string(y))?"("+x+" || "+y+")": x || y  ),
        list("+",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" + "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" + "+y+")":(is_string(x) && is_string(y))?"("+x+" + "+y+")": x + y  ),
        list("-",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" - "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" - "+y+")":(is_string(x) && is_string(y))?"("+x+" - "+y+")": x - y  ),
        list("*",             (x,y) => (is_string(x) && !is_string(y))?"("+x+" * "+stringify(y)+")":(!is_string(x) && is_string(y))?"("+stringify(x)+" * "+y+")":(is_string(x) && is_string(y))?"("+x+" * "+y+")": x * y  ),
@@ -1049,6 +1053,16 @@ function partial_evaluator(str) {
 
 // --------------------------examples----------------------
 
+// partial_evaluator("function f(x,y){const tmp=y+3;\
+// return x+tmp;}\
+// function b(x){return f(x,0);}\
+// b(4);\
+// ");
+
+// partial_evaluator("display(3);\
+// const x=(4+5)===(3*6/2) && (true || false);\
+// x;");
+
 // partial_evaluator("const x=3;\
 // x;");
 
@@ -1093,6 +1107,23 @@ function partial_evaluator(str) {
 
 // partial_evaluator("function f(x){return x===1?1:f(x-1);}(f)(3);");
 
+// partial_evaluator("const a=2;function f(x){const z=2;\
+// if(x===z){\
+// return 8;\
+// }\
+// else{\
+//     display(10);\
+//     return 4;\
+// }\
+// return 2;}");
+
+
+// partial_evaluator("function factorial(n){\
+// return n===1?1:n*factorial(n-1);}\
+// factorial(4);");
+
+
+    
 // --------------------------further enhancments----------------------
 
 // partial_evaluator("{const x = 3;} 5+2;"); // can remove this block
