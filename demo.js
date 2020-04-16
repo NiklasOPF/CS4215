@@ -1066,6 +1066,10 @@ function partial_evaluator(str) {
 // partial_evaluator("const x=3;\
 // x;");
 
+// partial_evaluator("const x=3;\
+// const y=2;\
+// (x!==y)? (x*y) : (x+y);");
+
 // partial_evaluator("const x=2;\
 // const y=5;\
 // if(x===y){\
@@ -1078,16 +1082,20 @@ function partial_evaluator(str) {
 // }");
 
 
-// partial_evaluator("{const x=3;x+4;}const y=2;x+y;");
+// partial_evaluator("{const x=3;x+4;}\
+// const y=2;\
+// x+y;");
 
-// partial_evaluator("{const x=3;x+4;}const y=2;y;");
+// partial_evaluator("const z=4;\
+// {const x=3;x+z;}");
 
-// partial_evaluator("const z=3;if(true){\
+// partial_evaluator("const z=3;if(z===2){\
 //     const w=1;\
-//     const y=w+1+z;\
-//     y;\
+//     w;\
 // }\
-// else{4;}");
+// else{const t=2;\
+// t+z;}");
+
 
 // partial_evaluator("56;(! (1 === 1)) ? 1 : 2;");
 
