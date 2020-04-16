@@ -298,13 +298,16 @@ function partial_eval(stmt,env,final_pro){
     let s="";
     let x=0;
     let ll=l;
+    // display(l);
     for(x=0;x<length(l)-1;x=x+1){
         s=s+head(ll)+",";
         ll=tail(ll);
         
     }
+    if(l!==null){
     s=s+head(ll);
-    
+    }
+    else{s=s;}
     
     let ee=(evaluatefunc(make_block(function_definition_body(stmt)),exenv,final_pro));
     let e=head(ee);
@@ -574,15 +577,15 @@ function fapply(stmt,env,final_pro){
             s=s+(is_string(head(ll))?head(ll):stringify(head(ll)))+",";
             ll=tail(ll);
         }
-        
-        s=s+(is_string(head(ll))?head(ll):stringify(head(ll)));
+        if(l!==null){
+        s=s+(is_string(head(ll))?head(ll):stringify(head(ll)));}else {s=s;}
         let ss="("+lookup_name_value(name_of_name(operator(stmt)), env)+")("+s+")";
 
         if(lookup_name_value(name_of_name(operator(stmt)), env)=== name_of_name(operator(stmt))){
             e=ss;
         }else{
             ss=ss+";";
-            e= evaluate(parse( ss),env,final_pro);
+            e= evaluate(parse(ss),env,final_pro);
         }
     }else{
         "1";
@@ -1155,5 +1158,8 @@ function partial_evaluator(str) {
 // }else{return x;}\
 // return 2;}f(3);");
 
-// partial_evaluator("function f(x){if(x===1){function g(z,y){return x+y+z;}return g(2,1);}else{return 4;}}");
+// partial_evaluator("function f(x){if(x===1){\
+// function g(z,y){return y+z+x;}return g(2,1);}\
+// else{return 4;}}\
+// f(2);");
 
